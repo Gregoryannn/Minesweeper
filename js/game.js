@@ -1,6 +1,5 @@
-import { Cell } from '/js/cell.js'
-import { UI } from '/js/ui.js'
-
+import { Cell } from "/js/cell.js";
+import { UI } from "/js/ui.js";
 
 class Game extends UI {
     #config = {
@@ -21,6 +20,8 @@ class Game extends UI {
         }
     }
 
+
+
     #numeberOfRows = null;
     #numeberOfCols = null;
     #numeberOfMines = null;
@@ -29,13 +30,18 @@ class Game extends UI {
     #board = null;
 
 
+
     initialiazeGame() {
         this.#handleElements()
         this.#newGame()
     }
 
-    #newGame(rows = this.#config.easy.rows, cols = this.#config.easy.cols, mines = this.#config.easy.mines) {
-        this.#numeberOfRows = rows;
+    #newGame(
+
+        rows = this.#config.easy.rows,
+        cols = this.#config.easy.cols,
+        mines = this.#config.easy.mines
+    ){
         this.#numeberOfCols = cols;
         this.#numeberOfMines = mines;
         this.#generateCells();
@@ -59,11 +65,21 @@ class Game extends UI {
         this.#cells.flat().forEach(cell => {
             this.#board.insertAdjacentHTML('beforeend', cell.createElement())
             cell.element = cell.getElement(cell.selector)
-        })
+        });
     }
+
+
+    #setStyles() {
+        document.documentElement.style.setProperty(
+            "--cells-in-row",
+            this.#numberOfCols
+        );
+    }
+
 }
+
 
 window.onload = function () {
     const game = new Game();
     game.initialiazeGame();
-}
+};

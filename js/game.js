@@ -203,4 +203,5 @@ class Game extends UI {
 window.onload = function () {
     const game = new Game();
     game.initialiazeGame();
+
 };

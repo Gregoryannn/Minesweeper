@@ -2,6 +2,9 @@ import { Cell } from "/js/cell.js";
 import { UI } from "/js/ui.js";
 import { Timer } from "/js/timer.js";
 import { ResetButton } from "/js/resetButton.js";
+import { Modal } from '/js/modal.js'
+
+
 
 class Game extends UI {
     #config = {
@@ -29,10 +32,14 @@ class Game extends UI {
     #numeberOfRows = null;
     #numeberOfCols = null;
     #numeberOfMines = null;
+    #modal = new Modal();
+
 
     #cells = [];
     #board = null;
     #cellsElements = null;
+    #cellsToReveal = 0;
+    #revealedCells = 0;
 
 
     #buttons = {
@@ -63,6 +70,11 @@ class Game extends UI {
         this.#numeberOfMines = mines;
         this.#counter.setValue(this.#numberOfMines);
         this.#timer.resetTimer();
+        this.#cellsToReveal = this.#numberOfCols * this.#numberOfRows - this.#numberOfMines;
+        this.#buttons.reset.changeEmotion('neutral');
+
+        this.#isGameFinished = false;
+        this.#revealedCells = 0;
 
         this.#setStyles();
 
@@ -79,8 +91,16 @@ class Game extends UI {
         this.#isGameFinished = true;
         this.#timer.stopTimer();
 
+        this.#modal.buttonText = 'Close';
+
         if (!isWin) {
             this.#revealMines()
+            this.#modal.infoText = 'You lost, try again!';
+            this.#buttons.reset.changeEmotion('negative');
+            this.#modal.setText();
+            this.#modal.toggleModal();
+            return;
+
         }
     }
 
@@ -99,6 +119,7 @@ class Game extends UI {
     }
 
     #addButtonsEventsListeners() {
+        this.#buttons.modal.addEventListener('click', this.#modal.toggleModal)
         this.#buttons.easy.addEventListener('click', () => this.#handleNewGameClick(this.#config.easy.rows, this.#config.easy.cols, this.#config.easy.mines));
         this.#buttons.normal.addEventListener('click', () => this.#handleNewGameClick(this.#config.normal.rows, this.#config.normal.cols, this.#config.normal.mines));
         this.#buttons.expert.addEventListener('click', () => this.#handleNewGameClick(this.#config.expert.rows, this.#config.expert.cols, this.#config.expert.mines));
@@ -199,11 +220,21 @@ class Game extends UI {
     } else {
         this.#setCellValue(cell);
     }
+
+    if (this.#revealedCells === this.#cellsToReveal && !this.#isGameFinished) {
+        this.#endGame(true);
+    }
+
 }
+
+
 
   #revealMines(){
     this.#cells.flat().filter(({ isMine }) => isMine).forEach(cell => cell.revealCell())
 }
+
+
+
 
  #setCellValue(cell){
     let mineCount = 0;
@@ -214,8 +245,11 @@ class Game extends UI {
             }
         }
     }
+
     cell.value = mineCount;
     cell.revealCell();
+
+    this.#revealedCells++;
 
     if (!cell.value) {
         for (let rowIndex = Math.max(cell.y - 1, 0); rowIndex <= Math.min(cell.y + 1, this.#numberOfRows - 1); rowIndex++) {
@@ -228,6 +262,9 @@ class Game extends UI {
         }
     }
 }
+
+
+
 
   #setStyles() {
     document.documentElement.style.setProperty("--cells-in-row", this.#numberOfCols);

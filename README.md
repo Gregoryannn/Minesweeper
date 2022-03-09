@@ -18,4 +18,4 @@ I added some code improvements. I changed shoot listener. Now if you hold down a
 
 
 ## 📷 UI
-![Minesweeper](![Minesweeper](https://user-images.githubusercontent.com/32854050/157412344-7b4fdcac-4934-4daa-8c6f-09c92016f1d6.jpg))
+![Minesweeper](https://user-images.githubusercontent.com/32854050/157412344-7b4fdcac-4934-4daa-8c6f-09c92016f1d6.jpg)
